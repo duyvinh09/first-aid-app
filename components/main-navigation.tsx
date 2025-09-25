@@ -10,7 +10,7 @@ export default function MainNavigation() {
   const navItems = [
     { href: "/", label: "Home", icon: Home },
     { href: "/search", label: "Search", icon: Search },
-    { href: "/chat", label: "AI Chat", icon: MessageSquare },
+    { href: "/chat", label: "Chat", icon: MessageSquare },
     { href: "/emergency", label: "Emergency", icon: Phone },
   ]
 

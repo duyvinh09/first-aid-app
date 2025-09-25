@@ -47,7 +47,7 @@ export default function GuidePage({ params }: GuidePageProps) {
       </header>
 
       <main className="flex-1">
-        <div className="container px-4 py-6">
+        <div className="container px-4 py-6 max-w-6xl mx-auto">
           {/* Hero Section */}
           <Card className="mb-6">
             <div className="relative">

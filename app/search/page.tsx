@@ -16,7 +16,7 @@ export default function SearchPage() {
   const [isSearching, setIsSearching] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<any>(null)
 
   // Mock search results data
   const mockSearchResults: SearchResult[] = [
@@ -247,7 +247,7 @@ export default function SearchPage() {
 
       <main className="flex-1">
         {searchResults.length > 0 ? (
-          <section className="container px-4 py-6">
+          <section className="container px-4 py-6 max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-medium">
                 Search Results ({searchResults.length})
@@ -302,7 +302,7 @@ export default function SearchPage() {
             </div>
           </section>
         ) : searchQuery ? (
-          <section className="container px-4 py-6">
+          <section className="container px-4 py-6 max-w-4xl mx-auto">
             <div className="text-center py-12">
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2">No results found</h3>
@@ -316,7 +316,7 @@ export default function SearchPage() {
           </section>
         ) : (
           <>
-            <section className="container px-4 py-6">
+            <section className="container px-4 py-6 max-w-6xl mx-auto">
               <h2 className="mb-3 text-lg font-medium">Recent Searches</h2>
               <div className="flex flex-wrap gap-2">
                 {recentSearches.map((term) => (
@@ -336,7 +336,7 @@ export default function SearchPage() {
               </div>
             </section>
 
-            <section className="container px-4 py-6">
+            <section className="container px-4 py-6 max-w-6xl mx-auto">
               <h2 className="mb-3 text-lg font-medium">Suggested Keywords</h2>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {suggestedKeywords.map((keyword) => (

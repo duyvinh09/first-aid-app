@@ -31,7 +31,7 @@ export default function HomePage() {
       </header>
 
       <main className="flex-1">
-        <section className="container px-4 py-6">
+        <section className="container px-4 py-6 max-w-6xl mx-auto">
           <h2 className="mb-6 text-2xl font-bold">Common Emergencies</h2>
           {isLoading && (
             <div className="flex items-center justify-center py-8">
@@ -56,10 +56,16 @@ export default function HomePage() {
                     situation.priority === 'high' ? 'bg-red-100' : 
                     situation.priority === 'medium' ? 'bg-yellow-100' : 'bg-green-100'
                   }`}>
-                    <situation.icon className={`h-6 w-6 ${
-                      situation.priority === 'high' ? 'text-red-600' : 
-                      situation.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
-                    }`} />
+                    {(() => {
+                      const IconComp: any = (situation as any).icon
+                      if (!IconComp) return null
+                      return (
+                        <IconComp className={`h-6 w-6 ${
+                          situation.priority === 'high' ? 'text-red-600' : 
+                          situation.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
+                        }`} />
+                      )
+                    })()}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground group-hover:text-red-600 transition-colors">
@@ -84,7 +90,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="container px-4 py-6">
+        <section className="container px-4 py-6 max-w-6xl mx-auto">
           <h2 className="mb-4 text-2xl font-bold">Emergency Assistance</h2>
           <EmergencyButton />
         </section>

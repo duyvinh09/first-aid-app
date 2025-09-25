@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Bot, Send, Mic, MicOff, Trash2, Lightbulb } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,10 +11,17 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import MainNavigation from '@/components/main-navigation'
 import { useChat, useVoiceSearch } from '@/hooks/use-api'
+import { Textarea } from '@/components/ui/textarea'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
   const [activeTab, setActiveTab] = useState('chat')
+  const supportChatUrl = process.env.NEXT_PUBLIC_SUPPORT_CHAT_URL || ''
+  const [ticketEmail, setTicketEmail] = useState('')
+  const [ticketSubject, setTicketSubject] = useState('')
+  const [ticketMessage, setTicketMessage] = useState('')
+  const [ticketSubmitted, setTicketSubmitted] = useState(false)
   
   const { messages, loading, error, sendMessage, clearChat } = useChat()
   const { 
@@ -24,6 +31,12 @@ export default function ChatPage() {
     startListening, 
     stopListening 
   } = useVoiceSearch()
+
+  const handleQuickSend = useCallback(async (text: string) => {
+    if (!text || loading) return
+    setActiveTab('chat')
+    await sendMessage(text)
+  }, [loading, sendMessage])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,14 +122,15 @@ export default function ChatPage() {
       </header>
 
       <main className="flex-1 flex">
-        <div className="flex-1 flex flex-col">
+        <div className="container mx-auto w-full max-w-5xl flex-1 flex flex-col px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-2 mx-4 mt-4">
+            <TabsList className="grid w-full grid-cols-3 mt-2">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="suggestions">Quick Help</TabsTrigger>
+              <TabsTrigger value="support">Ticket & FAQ</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="chat" className="flex-1 flex flex-col m-4">
+            <TabsContent value="chat" className="flex-1 flex flex-col mt-2">
               <Card className="flex-1 flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -137,11 +151,12 @@ export default function ChatPage() {
                           </p>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md mx-auto">
                             {suggestions.slice(0, 4).map((suggestion, index) => (
-                              <Button
+                          <Button
                                 key={index}
                                 variant="outline"
                                 className="text-left justify-start h-auto p-3"
-                                onClick={() => setMessage(suggestion)}
+                            onClick={() => handleQuickSend(suggestion)}
+                            disabled={loading}
                               >
                                 <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
                                 <span className="text-sm">{suggestion}</span>
@@ -253,7 +268,7 @@ export default function ChatPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="suggestions" className="flex-1 m-4">
+            <TabsContent value="suggestions" className="flex-1 mt-2">
               <div className="space-y-6">
                 {quickActions.map((category, categoryIndex) => (
                   <Card key={categoryIndex}>
@@ -267,7 +282,8 @@ export default function ChatPage() {
                             key={actionIndex}
                             variant="outline"
                             className="text-left justify-start h-auto p-3"
-                            onClick={() => setMessage(action)}
+                            onClick={() => handleQuickSend(action)}
+                            disabled={loading}
                           >
                             <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
                             <span className="text-sm">{action}</span>
@@ -277,6 +293,100 @@ export default function ChatPage() {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="support" className="flex-1 mt-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Bot className="h-5 w-5 text-red-600" />
+                      Send Support Ticket
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {ticketSubmitted ? (
+                      <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-800">
+                        Your ticket has been sent. Please wait for a response via email.
+                      </div>
+                    ) : (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                          if (!ticketEmail.trim() || !ticketSubject.trim() || !ticketMessage.trim()) return
+                          setTicketSubmitted(true)
+                          setTicketEmail('')
+                          setTicketSubject('')
+                          setTicketMessage('')
+                        }}
+                        className="space-y-3"
+                      >
+                        <Input
+                          type="email"
+                          placeholder="Email"
+                          value={ticketEmail}
+                          onChange={(e) => setTicketEmail(e.target.value)}
+                          required
+                        />
+                        <Input
+                          placeholder="Title"
+                          value={ticketSubject}
+                          onChange={(e) => setTicketSubject(e.target.value)}
+                          required
+                        />
+                        <Textarea
+                          placeholder="Description..."
+                          value={ticketMessage}
+                          onChange={(e) => setTicketMessage(e.target.value)}
+                          rows={10}
+                          required
+                        />
+                        <div className="flex items-center gap-2">
+                          <Button type="submit" className="bg-red-600 hover:bg-red-700">
+                            Gửi Ticket
+                          </Button>
+                          {supportChatUrl && (
+                            <Button type="button" variant="outline" onClick={() => window.open(supportChatUrl, '_blank', 'noopener,noreferrer')}>
+                              Open chat
+                            </Button>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Or contact quickly: <a href="tel:115" className="underline">115</a>
+                        </div>
+                      </form>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>FAQ</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>How to use AI assistant?</AccordionTrigger>
+                        <AccordionContent>
+                          Go to Chat tab, enter a question or use voice to speak, the system will respond immediately.
+                        </AccordionContent>
+                      </AccordionItem>
+                      <AccordionItem value="item-2">
+                        <AccordionTrigger>How to find the nearest hospital?</AccordionTrigger>
+                        <AccordionContent>
+                          Go to Emergency page, grant location permission. The list of hospitals and direction buttons will be displayed.
+                        </AccordionContent>
+                      </AccordionItem>
+                      <AccordionItem value="item-3">
+                        <AccordionTrigger>How to report an emergency?</AccordionTrigger>
+                        <AccordionContent>
+                          Press the 115 button on the Emergency page, or send a Ticket with contact information.
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
           </Tabs>
