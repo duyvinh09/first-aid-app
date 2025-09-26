@@ -470,4 +470,3 @@ const guides = {
     ]
   },
 }
-

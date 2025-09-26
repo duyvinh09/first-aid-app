@@ -42,6 +42,22 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
+        {/* EmailJS SDK */}
+        <script
+          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                if (window.emailjs && !window.__emailjs_initialized__) {
+                  window.emailjs.init({ publicKey: 'MvhIHlilzHcSmpUQ9' });
+                  window.__emailjs_initialized__ = true;
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body className={inter.className}>
         <AppProvider>
