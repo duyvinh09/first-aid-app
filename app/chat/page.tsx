@@ -13,20 +13,17 @@ import MainNavigation from '@/components/main-navigation'
 import { useChat, useVoiceSearch } from '@/hooks/use-api'
 import { Textarea } from '@/components/ui/textarea'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import emailjs from 'emailjs-com'
 
 export default function ChatPage() {
   const [message, setMessage] = useState('')
   const [activeTab, setActiveTab] = useState('chat')
   const supportChatUrl = process.env.NEXT_PUBLIC_SUPPORT_CHAT_URL || ''
-  const [ticketName, setTicketName] = useState('')
   const [ticketEmail, setTicketEmail] = useState('')
   const [ticketSubject, setTicketSubject] = useState('')
   const [ticketMessage, setTicketMessage] = useState('')
   const [ticketSubmitted, setTicketSubmitted] = useState(false)
-  const [ticketLoading, setTicketLoading] = useState(false)
   const [ticketError, setTicketError] = useState<string | null>(null)
-  const emailjsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || ''
-  const emailjsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || ''
   
   const { messages, loading, error, sendMessage, clearChat } = useChat()
   const { 
@@ -100,6 +97,29 @@ export default function ChatPage() {
     "First aid for allergic reactions"
   ]
 
+  // Hàm gửi ticket qua emailjs
+  const sendTicketEmail = async () => {
+    setTicketError(null)
+    try {
+      const result = await emailjs.send(
+        'service_pnv',
+        'template_x049znr',
+        {
+          user_email: ticketEmail,
+          subject: ticketSubject,
+          message: ticketMessage,
+        },
+        'SF0vy8F1HFS8yRhaB'
+      )
+      setTicketSubmitted(true)
+      setTicketEmail('')
+      setTicketSubject('')
+      setTicketMessage('')
+    } catch (err: any) {
+      setTicketError('Gửi ticket thất bại. Vui lòng thử lại!')
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background">
@@ -115,10 +135,10 @@ export default function ChatPage() {
             </div>
           </div>
           <Button
-            variant="outline"
-            size="sm"
             onClick={clearChat}
             className="flex items-center gap-2"
+            type="button"
+            disabled={loading}
           >
             <Trash2 className="h-4 w-4" />
             Clear Chat
@@ -158,10 +178,10 @@ export default function ChatPage() {
                             {suggestions.slice(0, 4).map((suggestion, index) => (
                           <Button
                                 key={index}
-                                variant="outline"
                                 className="text-left justify-start h-auto p-3"
-                            onClick={() => handleQuickSend(suggestion)}
-                            disabled={loading}
+                                onClick={() => handleQuickSend(suggestion)}
+                                disabled={loading}
+                                type="button"
                               >
                                 <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
                                 <span className="text-sm">{suggestion}</span>
@@ -238,14 +258,12 @@ export default function ChatPage() {
                         className="flex-1"
                         disabled={loading}
                       />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={handleVoiceToggle}
-                        disabled={loading}
-                        className={isListening ? 'text-red-600' : ''}
-                      >
+                          <Button
+                            type="button"
+                            onClick={handleVoiceToggle}
+                            disabled={loading}
+                            className={isListening ? 'text-red-600' : ''}
+                          >
                         {isListening ? (
                           <MicOff className="h-4 w-4" />
                         ) : (
@@ -254,7 +272,6 @@ export default function ChatPage() {
                       </Button>
                       <Button
                         type="submit"
-                        size="icon"
                         className="bg-red-600 hover:bg-red-700"
                         disabled={!message.trim() || loading}
                       >
@@ -285,10 +302,10 @@ export default function ChatPage() {
                         {category.actions.map((action, actionIndex) => (
                           <Button
                             key={actionIndex}
-                            variant="outline"
                             className="text-left justify-start h-auto p-3"
                             onClick={() => handleQuickSend(action)}
                             disabled={loading}
+                            type="button"
                           >
                             <Lightbulb className="h-4 w-4 mr-2 flex-shrink-0" />
                             <span className="text-sm">{action}</span>
@@ -319,46 +336,11 @@ export default function ChatPage() {
                       <form
                         onSubmit={async (e) => {
                           e.preventDefault()
-                          setTicketError(null)
-                          if (!ticketName.trim() || !ticketEmail.trim() || !ticketSubject.trim() || !ticketMessage.trim()) return
-                          if (!emailjsServiceId || !emailjsTemplateId || !window.emailjs) {
-                            setTicketError('Email service is not configured.')
-                            return
-                          }
-                          try {
-                            setTicketLoading(true)
-                            await window.emailjs!.send(
-                              emailjsServiceId,
-                              emailjsTemplateId,
-                              {
-                                name: ticketName.trim(),
-                                from_email: ticketEmail.trim(),
-                                subject: ticketSubject.trim(),
-                                message: ticketMessage.trim(),
-                                time: new Date().toISOString(),
-                                'page-url': typeof window !== 'undefined' ? window.location.href : '',
-                                page_url: typeof window !== 'undefined' ? window.location.href : '',
-                              }
-                            )
-                            setTicketSubmitted(true)
-                            setTicketName('')
-                            setTicketEmail('')
-                            setTicketSubject('')
-                            setTicketMessage('')
-                          } catch (err: any) {
-                            setTicketError(err?.message || 'Failed to send ticket')
-                          } finally {
-                            setTicketLoading(false)
-                          }
+                          if (!ticketEmail.trim() || !ticketSubject.trim() || !ticketMessage.trim()) return
+                          await sendTicketEmail()
                         }}
                         className="space-y-3"
                       >
-                        <Input
-                          placeholder="Name"
-                          value={ticketName}
-                          onChange={(e) => setTicketName(e.target.value)}
-                          required
-                        />
                         <Input
                           type="email"
                           placeholder="Email"
@@ -379,21 +361,19 @@ export default function ChatPage() {
                           rows={10}
                           required
                         />
-                        {ticketError && (
-                          <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-800">
-                            {ticketError}
-                          </div>
-                        )}
                         <div className="flex items-center gap-2">
-                          <Button type="submit" className="bg-red-600 hover:bg-red-700" disabled={ticketLoading}>
-                            {ticketLoading ? 'Sending...' : 'Send Ticket'}
+                          <Button type="submit" className="bg-red-600 hover:bg-red-700">
+                            Gửi Ticket
                           </Button>
                           {supportChatUrl && (
-                            <Button type="button" variant="outline" onClick={() => window.open(supportChatUrl, '_blank', 'noopener,noreferrer')}>
+                            <Button type="button" onClick={() => window.open(supportChatUrl, '_blank', 'noopener,noreferrer')} className="border border-gray-300">
                               Open chat
                             </Button>
                           )}
                         </div>
+                        {ticketError && (
+                          <div className="text-xs text-red-600 mt-2">{ticketError}</div>
+                        )}
                         <div className="text-xs text-muted-foreground">
                           Or contact quickly: <a href="tel:115" className="underline">115</a>
                         </div>

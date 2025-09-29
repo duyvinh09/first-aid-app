@@ -76,6 +76,7 @@ export default function AIChat({
     "What should I do for a burn?",
     "How to stop bleeding?",
     "Emergency contact numbers",
+    "First aid kit checklist"
   ]
 
   return (
