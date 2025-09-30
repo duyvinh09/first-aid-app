@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 import EmergencyButton from "@/components/emergency-button"
 import MainNavigation from "@/components/main-navigation"
@@ -12,17 +13,40 @@ export default function HomePage() {
   const { emergencySituations, fetchEmergencySituations } = useAppStore()
   const isLoading = useAppLoading()
   const error = useAppError()
+  const router = useRouter()
 
   useEffect(() => {
     if (emergencySituations.length === 0) {
       fetchEmergencySituations()
     }
   }, [emergencySituations.length, fetchEmergencySituations])
+
+  // 👉 Hàm xử lý khi bấm nút Admin
+  const handleAdminClick = () => {
+    const confirmed = window.confirm(
+      "Do you want to switch to Admin mode?\n\nWhen you switch to Admin mode, you will have the ability to modify data on this page. Please make sure you understand this action."
+    )
+    if (confirmed) {
+      router.push("/admin")
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background">
         <div className="container flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold text-red-600">Quick First Aid</h1>
+          {/* Logo + Admin Mode */}
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-red-600">Quick First Aid</h1>
+            <button
+              onClick={handleAdminClick}
+              className="text-sm font-medium text-red-600 border border-red-300 px-3 py-1 rounded-md hover:bg-red-50 transition-colors"
+            >
+              Switch to Admin
+            </button>
+          </div>
+
+          {/* Search */}
           <Link href="/search" className="rounded-full p-2 hover:bg-muted">
             <Search className="h-5 w-5" />
             <span className="sr-only">Search</span>
@@ -52,18 +76,28 @@ export default function HomePage() {
                 className="group rounded-lg border p-4 transition-all hover:shadow-md hover:border-red-200"
               >
                 <div className="flex items-start gap-3">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                    situation.priority === 'high' ? 'bg-red-100' : 
-                    situation.priority === 'medium' ? 'bg-yellow-100' : 'bg-green-100'
-                  }`}>
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                      situation.priority === "high"
+                        ? "bg-red-100"
+                        : situation.priority === "medium"
+                        ? "bg-yellow-100"
+                        : "bg-green-100"
+                    }`}
+                  >
                     {(() => {
                       const IconComp: any = (situation as any).icon
                       if (!IconComp) return null
                       return (
-                        <IconComp className={`h-6 w-6 ${
-                          situation.priority === 'high' ? 'text-red-600' : 
-                          situation.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
-                        }`} />
+                        <IconComp
+                          className={`h-6 w-6 ${
+                            situation.priority === "high"
+                              ? "text-red-600"
+                              : situation.priority === "medium"
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        />
                       )
                     })()}
                   </div>
@@ -75,12 +109,20 @@ export default function HomePage() {
                       {situation.description}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        situation.priority === 'high' ? 'bg-red-100 text-red-700' : 
-                        situation.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
-                      }`}>
-                        {situation.priority === 'high' ? 'High Priority' : 
-                         situation.priority === 'medium' ? 'Medium Priority' : 'Low Priority'}
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          situation.priority === "high"
+                            ? "bg-red-100 text-red-700"
+                            : situation.priority === "medium"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {situation.priority === "high"
+                          ? "High Priority"
+                          : situation.priority === "medium"
+                          ? "Medium Priority"
+                          : "Low Priority"}
                       </span>
                     </div>
                   </div>
@@ -102,7 +144,20 @@ export default function HomePage() {
   )
 }
 
-import { Heart, Flame, Droplets, Skull, LigatureIcon as Bandage, Thermometer, Pill, Scissors, Zap, Eye, Brain, Shield } from "lucide-react"
+import {
+  Heart,
+  Flame,
+  Droplets,
+  Skull,
+  LigatureIcon as Bandage,
+  Thermometer,
+  Pill,
+  Scissors,
+  Zap,
+  Eye,
+  Brain,
+  Shield,
+} from "lucide-react"
 
 const mockEmergencySituations = [
   { id: "cpr", name: "CPR", icon: Heart, description: "Cardiopulmonary resuscitation", priority: "high" },
@@ -118,4 +173,3 @@ const mockEmergencySituations = [
   { id: "head-injury", name: "Head Injury", icon: Brain, description: "Head trauma assessment", priority: "high" },
   { id: "allergic-reaction", name: "Allergic Reaction", icon: Shield, description: "Anaphylaxis treatment", priority: "high" },
 ]
-
