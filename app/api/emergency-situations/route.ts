@@ -9,5 +9,3 @@ export async function GET(_req: NextRequest) {
     headers: { "Content-Type": "application/json" },
   })
 }
-
-
