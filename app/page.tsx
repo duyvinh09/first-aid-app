@@ -74,6 +74,21 @@ export default function HomePage() {
                 key={situation.id}
                 href={`/guide/${situation.id}`}
                 className="group rounded-lg border p-4 transition-all hover:shadow-md hover:border-red-200"
+                onClick={() => {
+                  // Tăng biến đếm tổng lượt xem tài liệu trong localStorage
+                  const key = 'totalDocumentViews';
+                  const current = Number(localStorage.getItem(key) || '0');
+                  localStorage.setItem(key, String(current + 1));
+                  // Tăng biến đếm cho từng loại tài liệu
+                  const detailKey = 'documentViewsDetail';
+                  const detailRaw = localStorage.getItem(detailKey);
+                  let detail: Record<string, number> = {};
+                  try {
+                    if (detailRaw) detail = JSON.parse(detailRaw);
+                  } catch {}
+                  detail[situation.id] = (detail[situation.id] || 0) + 1;
+                  localStorage.setItem(detailKey, JSON.stringify(detail));
+                }}
               >
                 <div className="flex items-start gap-3">
                   <div
