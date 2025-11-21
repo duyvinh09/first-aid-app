@@ -1,23 +1,34 @@
 "use client";
 
-import { useEffect } from "react"
-import Link from "next/link"
-import { Search } from "lucide-react"
-import EmergencyButton from "@/components/emergency-button"
-import MainNavigation from "@/components/main-navigation"
-import AIChat from "@/components/ai-chat"
-import { useAppStore, useAppLoading, useAppError } from "@/lib/store"
+import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Search } from "lucide-react";
+import EmergencyButton from "@/components/emergency-button";
+import MainNavigation from "@/components/main-navigation";
+import AIChat from "@/components/ai-chat";
+import { useAppStore, useAppLoading, useAppError } from "@/lib/store";
 
 export default function HomePage() {
-  const { emergencySituations, fetchEmergencySituations } = useAppStore()
-  const isLoading = useAppLoading()
-  const error = useAppError()
+  const router = useRouter();
+
+  const { emergencySituations, fetchEmergencySituations } = useAppStore();
+  const isLoading = useAppLoading();
+  const error = useAppError();
 
   useEffect(() => {
     if (emergencySituations.length === 0) {
       fetchEmergencySituations();
     }
-  }, [emergencySituations.length, fetchEmergencySituations])
+  }, [emergencySituations.length, fetchEmergencySituations]);
+
+  // <-- Định nghĩa handleAdminClick ở đây
+  const handleAdminClick = () => {
+    // chuyển hướng sang trang admin
+    router.push("/admin");
+    // hoặc nếu muốn mở trong tab mới: window.open("/admin", "_blank");
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background">
@@ -66,11 +77,11 @@ export default function HomePage() {
                 className="group rounded-lg border p-4 transition-all hover:shadow-md hover:border-red-200"
                 onClick={() => {
                   // Tăng biến đếm tổng lượt xem tài liệu trong localStorage
-                  const key = 'totalDocumentViews';
-                  const current = Number(localStorage.getItem(key) || '0');
+                  const key = "totalDocumentViews";
+                  const current = Number(localStorage.getItem(key) || "0");
                   localStorage.setItem(key, String(current + 1));
                   // Tăng biến đếm cho từng loại tài liệu
-                  const detailKey = 'documentViewsDetail';
+                  const detailKey = "documentViewsDetail";
                   const detailRaw = localStorage.getItem(detailKey);
                   let detail: Record<string, number> = {};
                   try {
@@ -94,11 +105,16 @@ export default function HomePage() {
                       const IconComp: any = (situation as any).icon;
                       if (!IconComp) return null;
                       return (
-                        <IconComp className={`h-6 w-6 ${
-                          situation.priority === 'high' ? 'text-red-600' : 
-                          situation.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
-                        }`} />
-                      )
+                        <IconComp
+                          className={`h-6 w-6 ${
+                            situation.priority === "high"
+                              ? "text-red-600"
+                              : situation.priority === "medium"
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        />
+                      );
                     })()}
                   </div>
                   <div className="flex-1">
@@ -144,7 +160,20 @@ export default function HomePage() {
   );
 }
 
-import { Heart, Flame, Droplets, Skull, LigatureIcon as Bandage, Thermometer, Pill, Scissors, Zap, Eye, Brain, Shield } from "lucide-react"
+import {
+  Heart,
+  Flame,
+  Droplets,
+  Skull,
+  LigatureIcon as Bandage,
+  Thermometer,
+  Pill,
+  Scissors,
+  Zap,
+  Eye,
+  Brain,
+  Shield,
+} from "lucide-react";
 
 const mockEmergencySituations = [
   { id: "cpr", name: "CPR", icon: Heart, description: "Cardiopulmonary resuscitation", priority: "high" },
@@ -159,5 +188,4 @@ const mockEmergencySituations = [
   { id: "eye-injury", name: "Eye Injury", icon: Eye, description: "Eye trauma first aid", priority: "high" },
   { id: "head-injury", name: "Head Injury", icon: Brain, description: "Head trauma assessment", priority: "high" },
   { id: "allergic-reaction", name: "Allergic Reaction", icon: Shield, description: "Anaphylaxis treatment", priority: "high" },
-]
-
+];
