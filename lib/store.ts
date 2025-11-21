@@ -5,6 +5,16 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import { apiClient, type EmergencySituation, type Guide, type SearchResult } from './api'
 
 // Types for the store
+// Notification type used in the store
+export type NotificationItem = {
+  id: string
+  title: string
+  content: string
+  isRead: boolean
+  createdAt: string // ISO string
+  type: 'message' | 'system' | 'alert'
+}
+
 interface AppState {
   // User preferences
   userPreferences: {
@@ -37,6 +47,9 @@ interface AppState {
   emergencySituations: EmergencySituation[]
   guides: Record<string, Guide>
   searchCache: Record<string, SearchResult[]>
+
+  // Notifications
+  notifications: NotificationItem[]
   
   // UI state
   isLoading: boolean
@@ -80,6 +93,11 @@ interface AppActions {
   fetchEmergencySituations: () => Promise<void>
   fetchGuide: (id: string) => Promise<void>
   searchGuides: (query: string, filters?: any) => Promise<SearchResult[]>
+  // Notifications actions
+  addNotification: (notification: NotificationItem) => void
+  markNotificationAsRead: (id: string) => void
+  markNotificationAsUnread: (id: string) => void
+  fetchNotifications: () => Promise<void>
 }
 
 // Initial state
@@ -108,6 +126,7 @@ const initialState: AppState = {
   emergencySituations: [],
   guides: {},
   searchCache: {},
+  notifications: [],
   isLoading: false,
   error: null,
   lastUpdated: null
@@ -187,6 +206,34 @@ export const useAppStore = create<AppState & AppActions>()(
       // Data actions
       setEmergencySituations: (situations) =>
         set({ emergencySituations: situations, lastUpdated: new Date() }),
+
+      // Notifications actions
+      addNotification: (notification) =>
+        set((state) => ({ notifications: [notification, ...state.notifications] })),
+
+      markNotificationAsRead: (id) =>
+        set((state) => ({ notifications: state.notifications.map(n => n.id === id ? { ...n, isRead: true } : n) })),
+
+      markNotificationAsUnread: (id) =>
+        set((state) => ({ notifications: state.notifications.map(n => n.id === id ? { ...n, isRead: false } : n) })),
+
+      fetchNotifications: async () => {
+        try {
+          const notifications = await apiClient.getNotifications()
+          // normalize createdAt to ISO strings if needed
+          const normalized = (notifications || []).map((n: any) => ({
+            id: n.id,
+            title: n.title,
+            content: n.content,
+            isRead: !!n.isRead,
+            createdAt: n.createdAt || new Date().toISOString(),
+            type: n.type || 'system',
+          }))
+          set({ notifications: normalized })
+        } catch (e) {
+          // fallback: keep existing notifications
+        }
+      },
       
       setGuide: (guide) =>
         set((state) => ({
@@ -285,6 +332,7 @@ export const useAppStore = create<AppState & AppActions>()(
         emergencySituations: state.emergencySituations,
         guides: state.guides,
         searchCache: state.searchCache,
+        notifications: state.notifications,
         lastUpdated: state.lastUpdated
       })
     }

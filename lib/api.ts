@@ -218,6 +218,25 @@ class ApiClient {
     }[]>(`/emergency/hospitals?${params.toString()}`)
   }
 
+  // Notifications API
+  async getNotifications(): Promise<any[]> {
+    return this.request<any[]>('/notifications')
+  }
+
+  async postNotification(payload: { title: string; content: string; type?: string }): Promise<any> {
+    return this.request<any>('/notifications', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+  }
+
+  async patchNotification(id: string, payload: Partial<any>): Promise<any> {
+    return this.request<any>(`/notifications/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    })
+  }
+
   async reportEmergency(emergencyData: {
     type: string
     location: { lat: number; lng: number }

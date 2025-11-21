@@ -223,6 +223,6 @@ Dự án được phát triển cho mục đích học tập tại **CMU - IS 43
 
 ---
 
-**Phát triển với ❤️ bởi Team FireBlaze**
+**Phát triển với ❤️ bởi Team FireBlaze**D
 
 > _"Sơ cứu kịp thời, cứu sống kịp thời"_

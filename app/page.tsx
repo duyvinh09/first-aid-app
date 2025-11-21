@@ -9,6 +9,10 @@ import MainNavigation from "@/components/main-navigation";
 import AIChat from "@/components/ai-chat";
 import { useAppStore, useAppLoading, useAppError } from "@/lib/store";
 
+// --- QUAN TRỌNG: Import KHÔNG CÓ dấu ngoặc nhọn {} ---
+import NotificationBell from "@/components/ui/NotificationBell";
+
+
 export default function HomePage() {
   const router = useRouter();
 
@@ -153,7 +157,13 @@ export default function HomePage() {
           <EmergencyButton />
         </section>
       </main>
-
+      {/* bottom-24: Cao hơn nút Chat một chút */}
+      {/* z-50: Đảm bảo nằm đè lên mọi thứ */}
+      <div className="fixed bottom-36 right-4 z-[60]">
+        <div className="flex items-center justify-center bg-white rounded-full shadow-xl border border-gray-200 w-12 h-12">
+           <NotificationBell />
+        </div>
+      </div>
       <MainNavigation />
       <AIChat />
     </div>
