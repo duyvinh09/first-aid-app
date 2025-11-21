@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Search, BookOpen, Phone, MessageSquare } from "lucide-react"
+import { Home, Search, BookOpen, Phone, MessageSquare, LayoutDashboard } from "lucide-react"
 
 export default function MainNavigation() {
   const pathname = usePathname()
@@ -12,6 +12,7 @@ export default function MainNavigation() {
     { href: "/search", label: "Search", icon: Search },
     { href: "/chat", label: "Chat", icon: MessageSquare },
     { href: "/emergency", label: "Emergency", icon: Phone },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   ]
 
   return (

@@ -334,57 +334,53 @@ const guides = {
     title: "CPR (Cardiopulmonary Resuscitation)",
     description: "CPR can help save a life during a cardiac or breathing emergency. Learn the essential steps to perform effective CPR.",
     image: "/placeholder.svg?height=400&width=800",
-    video: "/placeholder.mp4",
+    video: "/icons/CPRR.mp4",
     audio: "/placeholder.mp3",
     category: "Emergency",
     priority: "high",
     tags: ["cardiac", "resuscitation", "emergency", "breathing", "life-saving"],
     steps: [
       {
-        instruction: "Check if the person is responsive by tapping their shoulder and shouting 'Are you OK?'",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Call for help.",
+        image: "/icons/1cpr.jpg?height=300&width=400",
         duration: "30 seconds",
-        audio: "/placeholder-step1.mp3"
       },
       {
-        instruction: "If unresponsive, call emergency services (115) or ask someone else to call.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Check pulse.",
+        image: "/icons/2cpr.jpg?height=300&width=400",
         duration: "1 minute",
-        video: "/placeholder-step2.mp4"
       },
       {
-        instruction: "Place the person on their back on a firm, flat surface.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Check for breathing.",
+        image: "/icons/3cpr.jpg?height=300&width=400",
         duration: "30 seconds"
       },
       {
-        instruction: "Kneel beside the person. Place the heel of one hand on the center of the chest, then place your other hand on top and interlock your fingers.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Give rescue breaths.",
+        image: "/icons/4cpr.jpg?height=300&width=400",
         duration: "1 minute",
-        video: "/placeholder-step4.mp4"
       },
       {
-        instruction: "Position your shoulders directly over your hands. Keep your arms straight and push hard and fast at a rate of 100-120 compressions per minute. Allow the chest to completely recoil between compressions.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Give chest compressions.",
+        image: "/icons/5cpr.jpg?height=300&width=400",
         duration: "2 minutes",
-        audio: "/placeholder-step5.mp3"
+      },
+      {
+        instruction: "Repeat until the emergency services take over.",
+        image: "/icons/6cpr.jpg?height=300&width=400",
+        duration: "2 minutes",
       },
     ],
     images: [
       {
-        url: "/placeholder.svg?height=400&width=600",
+        url: "/icons/Primar-CPR.jpg?height=300&width=400",
         alt: "CPR hand placement",
         description: "Proper hand placement for chest compressions"
       },
-      {
-        url: "/placeholder.svg?height=400&width=600",
-        alt: "CPR compression technique",
-        description: "Correct body position and compression technique"
-      }
     ],
     videos: [
       {
-        url: "/placeholder-cpr-full.mp4",
+        url: "/icons/CPRR.mp4",
         title: "Complete CPR Demonstration",
         description: "Full demonstration of CPR technique with proper timing",
         thumbnail: "/placeholder.svg?height=200&width=400"
@@ -409,52 +405,43 @@ const guides = {
     title: "Burns Treatment",
     description: "Proper first aid for burns can prevent infection and reduce pain. Learn how to assess and treat different types of burns.",
     image: "/placeholder.svg?height=400&width=800",
+    video: "/icons/BurnTreat.mp4",
+    audio: "/placeholder.mp3",
     category: "Injury",
     priority: "high",
     tags: ["burns", "wound", "treatment", "first aid", "injury"],
     steps: [
       {
-        instruction: "Ensure safety first. Remove the person from danger and stop the burning process.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Turn off the heat source.",
+        image: "/icons/burn1.jpg?height=300&width=400",
         duration: "1 minute"
       },
       {
-        instruction: "Remove jewelry, watches, and tight clothing from the burned area before swelling begins.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Run cool water over the burn.",
+        image: "/icons/burn2.jpg?height=300&width=400",
         duration: "2 minutes"
       },
       {
-        instruction: "Cool the burn with cool (not cold) running water for 10-15 minutes. Do not use ice.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Cover burn with sterile dressing.",
+        image: "/icons/burn3.jpg?height=300&width=400",
         duration: "15 minutes",
-        video: "/placeholder-burn-cooling.mp4"
       },
       {
-        instruction: "Cover the burn with a clean, non-stick bandage or cloth.",
-        image: "/placeholder.svg?height=300&width=400",
+        instruction: "Get to a burn center.",
+        image: "/icons/burn4.jpg?height=300&width=400",
         duration: "2 minutes"
-      },
-      {
-        instruction: "For severe burns, call emergency services immediately.",
-        image: "/placeholder.svg?height=300&width=400",
-        duration: "1 minute"
       },
     ],
     images: [
       {
-        url: "/placeholder.svg?height=400&width=600",
+        url: "/icons/mainburn.png?height=400&width=600",
         alt: "Burn severity assessment",
         description: "How to assess the severity of burns"
       },
-      {
-        url: "/placeholder.svg?height=400&width=600",
-        alt: "Proper burn cooling technique",
-        description: "Correct way to cool burns with running water"
-      }
     ],
     videos: [
       {
-        url: "/placeholder-burn-treatment.mp4",
+        url: "/icons/BurnTreat.mp4",
         title: "Burn Treatment Demonstration",
         description: "Complete demonstration of burn first aid treatment",
         thumbnail: "/placeholder.svg?height=200&width=400"

@@ -1,28 +1,39 @@
 "use client";
 
-import { useEffect } from "react";
-import Link from "next/link";
-import { Search } from "lucide-react";
-import EmergencyButton from "@/components/emergency-button";
-import MainNavigation from "@/components/main-navigation";
-import AIChat from "@/components/ai-chat";
-import { useAppStore, useAppLoading, useAppError } from "@/lib/store";
+import { useEffect } from "react"
+import Link from "next/link"
+import { Search } from "lucide-react"
+import EmergencyButton from "@/components/emergency-button"
+import MainNavigation from "@/components/main-navigation"
+import AIChat from "@/components/ai-chat"
+import { useAppStore, useAppLoading, useAppError } from "@/lib/store"
 
 export default function HomePage() {
-  const { emergencySituations, fetchEmergencySituations } = useAppStore();
-  const isLoading = useAppLoading();
-  const error = useAppError();
+  const { emergencySituations, fetchEmergencySituations } = useAppStore()
+  const isLoading = useAppLoading()
+  const error = useAppError()
 
   useEffect(() => {
     if (emergencySituations.length === 0) {
       fetchEmergencySituations();
     }
-  }, [emergencySituations.length, fetchEmergencySituations]);
+  }, [emergencySituations.length, fetchEmergencySituations])
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background">
         <div className="container flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold text-red-600">Quick First Aid</h1>
+          {/* Logo + Admin Mode */}
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-red-600">Quick First Aid</h1>
+            <button
+              onClick={handleAdminClick}
+              className="text-sm font-medium text-red-600 border border-red-300 px-3 py-1 rounded-md hover:bg-red-50 transition-colors"
+            >
+              Switch to Admin
+            </button>
+          </div>
+
+          {/* Search */}
           <Link href="/search" className="rounded-full p-2 hover:bg-muted">
             <Search className="h-5 w-5" />
             <span className="sr-only">Search</span>
@@ -53,6 +64,21 @@ export default function HomePage() {
                 key={situation.id}
                 href={`/guide/${situation.id}`}
                 className="group rounded-lg border p-4 transition-all hover:shadow-md hover:border-red-200"
+                onClick={() => {
+                  // Tăng biến đếm tổng lượt xem tài liệu trong localStorage
+                  const key = 'totalDocumentViews';
+                  const current = Number(localStorage.getItem(key) || '0');
+                  localStorage.setItem(key, String(current + 1));
+                  // Tăng biến đếm cho từng loại tài liệu
+                  const detailKey = 'documentViewsDetail';
+                  const detailRaw = localStorage.getItem(detailKey);
+                  let detail: Record<string, number> = {};
+                  try {
+                    if (detailRaw) detail = JSON.parse(detailRaw);
+                  } catch {}
+                  detail[situation.id] = (detail[situation.id] || 0) + 1;
+                  localStorage.setItem(detailKey, JSON.stringify(detail));
+                }}
               >
                 <div className="flex items-start gap-3">
                   <div
@@ -68,16 +94,11 @@ export default function HomePage() {
                       const IconComp: any = (situation as any).icon;
                       if (!IconComp) return null;
                       return (
-                        <IconComp
-                          className={`h-6 w-6 ${
-                            situation.priority === "high"
-                              ? "text-red-600"
-                              : situation.priority === "medium"
-                              ? "text-yellow-600"
-                              : "text-green-600"
-                          }`}
-                        />
-                      );
+                        <IconComp className={`h-6 w-6 ${
+                          situation.priority === 'high' ? 'text-red-600' : 
+                          situation.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'
+                        }`} />
+                      )
                     })()}
                   </div>
                   <div className="flex-1">
@@ -123,104 +144,20 @@ export default function HomePage() {
   );
 }
 
-import {
-  Heart,
-  Flame,
-  Droplets,
-  Skull,
-  LigatureIcon as Bandage,
-  Thermometer,
-  Pill,
-  Scissors,
-  Zap,
-  Eye,
-  Brain,
-  Shield,
-} from "lucide-react";
+import { Heart, Flame, Droplets, Skull, LigatureIcon as Bandage, Thermometer, Pill, Scissors, Zap, Eye, Brain, Shield } from "lucide-react"
 
 const mockEmergencySituations = [
-  {
-    id: "cpr",
-    name: "CPR",
-    icon: Heart,
-    description: "Cardiopulmonary resuscitation",
-    priority: "high",
-  },
-  {
-    id: "burns",
-    name: "Burns",
-    icon: Flame,
-    description: "Burn treatment and care",
-    priority: "high",
-  },
-  {
-    id: "bleeding",
-    name: "Bleeding",
-    icon: Droplets,
-    description: "Stop bleeding and wound care",
-    priority: "high",
-  },
-  {
-    id: "choking",
-    name: "Choking",
-    icon: Skull,
-    description: "Heimlich maneuver",
-    priority: "high",
-  },
-  {
-    id: "fractures",
-    name: "Fractures",
-    icon: Bandage,
-    description: "Bone fracture first aid",
-    priority: "medium",
-  },
-  {
-    id: "fever",
-    name: "Fever",
-    icon: Thermometer,
-    description: "High temperature management",
-    priority: "medium",
-  },
-  {
-    id: "poisoning",
-    name: "Poisoning",
-    icon: Pill,
-    description: "Poison exposure treatment",
-    priority: "high",
-  },
-  {
-    id: "cuts",
-    name: "Cuts & Wounds",
-    icon: Scissors,
-    description: "Minor wound care",
-    priority: "low",
-  },
-  {
-    id: "shock",
-    name: "Shock",
-    icon: Zap,
-    description: "Shock management",
-    priority: "high",
-  },
-  {
-    id: "eye-injury",
-    name: "Eye Injury",
-    icon: Eye,
-    description: "Eye trauma first aid",
-    priority: "high",
-  },
-  {
-    id: "head-injury",
-    name: "Head Injury",
-    icon: Brain,
-    description: "Head trauma assessment",
-    priority: "high",
-  },
-  {
-    id: "allergic-reaction",
-    name: "Allergic Reaction",
-    icon: Shield,
-    description: "Anaphylaxis treatment",
-    priority: "high",
-  },
-];
+  { id: "cpr", name: "CPR", icon: Heart, description: "Cardiopulmonary resuscitation", priority: "high" },
+  { id: "burns", name: "Burns", icon: Flame, description: "Burn treatment and care", priority: "high" },
+  { id: "bleeding", name: "Bleeding", icon: Droplets, description: "Stop bleeding and wound care", priority: "high" },
+  { id: "choking", name: "Choking", icon: Skull, description: "Heimlich maneuver", priority: "high" },
+  { id: "fractures", name: "Fractures", icon: Bandage, description: "Bone fracture first aid", priority: "medium" },
+  { id: "fever", name: "Fever", icon: Thermometer, description: "High temperature management", priority: "medium" },
+  { id: "poisoning", name: "Poisoning", icon: Pill, description: "Poison exposure treatment", priority: "high" },
+  { id: "cuts", name: "Cuts & Wounds", icon: Scissors, description: "Minor wound care", priority: "low" },
+  { id: "shock", name: "Shock", icon: Zap, description: "Shock management", priority: "high" },
+  { id: "eye-injury", name: "Eye Injury", icon: Eye, description: "Eye trauma first aid", priority: "high" },
+  { id: "head-injury", name: "Head Injury", icon: Brain, description: "Head trauma assessment", priority: "high" },
+  { id: "allergic-reaction", name: "Allergic Reaction", icon: Shield, description: "Anaphylaxis treatment", priority: "high" },
+]
+
