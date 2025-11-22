@@ -50,7 +50,7 @@ export default function RootLayout({
             __html: `
               (function(){
                 if (window.emailjs && !window.__emailjs_initialized__) {
-                  window.emailjs.init({ publicKey: 'MvhIHlilzHcSmpUQ9' });
+                  window.emailjs.init({ publicKey: '${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}' });
                   window.__emailjs_initialized__ = true;
                 }
               })();
