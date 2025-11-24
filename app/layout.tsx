@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import AppProvider from "@/components/app-provider"
+import ClientLayout from "./ClientLayout"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -42,28 +43,15 @@ export default function RootLayout({
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossOrigin=""
         />
-        {/* EmailJS SDK */}
-        <script
-          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                if (window.emailjs && !window.__emailjs_initialized__) {
-                  window.emailjs.init({ publicKey: 'MvhIHlilzHcSmpUQ9' });
-                  window.__emailjs_initialized__ = true;
-                }
-              })();
-            `,
-          }}
-        />
       </head>
       <body className={inter.className}>
-        <AppProvider>
+        
+        <ClientLayout>
           {children}
-        </AppProvider>
+        </ClientLayout>
       </body>
     </html>
   )
 }
+
+  
