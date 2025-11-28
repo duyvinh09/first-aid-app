@@ -3,28 +3,14 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import AppProvider from "@/components/app-provider"
+// Đảm bảo file này tồn tại trong folder components
+import { SOSButton } from "@/components/sos-button"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Quick First Aid Guide",
-  description: "Emergency first aid instructions at your fingertips",
-    generator: '@duyvinh09',
-    authors: [{ name: 'Quick First Aid Team' }],
-    icons: {
-      icon: [
-        { url: 'icons/favicon.ico', type: 'image/x-icon' },
-        { url: 'icons/favicon.svg', type: 'image/svg+xml' },
-        { url: '/icons/favicon-96x96.png', type: 'image/png', sizes: '96x96' },
-      ],
-      shortcut: '/icons/favicon.ico',
-      apple: '/icons/apple-touch-icon.png',
-    },
-    openGraph: {
-      locale: 'vi_VN',
-    },
-    themeColor: '#ffffff',
-    manifest: '/icons/site.webmanifest',
+  description: "Emergency first aid instructions",
 }
 
 export default function RootLayout({
@@ -34,34 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        {/* Leaflet CSS for maps */}
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossOrigin=""
-        />
-        {/* EmailJS SDK */}
-        <script
-          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(){
-                if (window.emailjs && !window.__emailjs_initialized__) {
-                  window.emailjs.init({ publicKey: 'MvhIHlilzHcSmpUQ9' });
-                  window.__emailjs_initialized__ = true;
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
       <body className={inter.className}>
         <AppProvider>
           {children}
+          {/* Chỉ test mình nút SOS trước */}
+          <SOSButton />
         </AppProvider>
       </body>
     </html>
